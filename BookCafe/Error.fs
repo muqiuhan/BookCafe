@@ -1,3 +1,7 @@
 module BookCafe.Error
 
-type t = | TabAlreadyOpened
+type t =
+    | TabAlreadyOpened
+    | CanNotPlaceEmptyOrder
+    | CanNotOrderWithClosedTab
+    | OrderAlreadyPlaced

@@ -2,19 +2,28 @@ module BookCafe.CommandHandlers
 
 open Chessie.ErrorHandling
 
-let apply state event =
-    match state, event with
-    | State.ClosedTab _, Event.TabOpened tab -> State.OpenedTab tab
-    | _ -> state
+module Handler =
+    let PlaceOrder (order: Domain.Order) =
+        function
+        | State.OpenedTab _ ->
+            if List.isEmpty order.Books && List.isEmpty order.Drinks then
+                fail Error.CanNotPlaceEmptyOrder
+            else
+                [ Event.OrderPlaced order ] |> ok
+        | State.ClosedTab _ -> fail Error.CanNotOrderWithClosedTab
+        | _ -> fail Error.OrderAlreadyPlaced
 
-let execute state command =
-    let handleOpenTab tab =
+    let OpenTab tab =
         function
         | State.ClosedTab _ -> [ Event.TabOpened tab ] |> ok
-        | _ -> Error.TabAlreadyOpened |> fail in
+        | _ -> Error.TabAlreadyOpened |> fail
 
+let apply = State.apply
+
+let execute state command =
     match command with
-    | Command.OpenTab tab -> handleOpenTab tab state
+    | Command.OpenTab tab -> Handler.OpenTab tab state
+    | Command.PlaceOrder order -> Handler.PlaceOrder order state
     | _ -> failwith "TODO"
 
 let evolve state command =

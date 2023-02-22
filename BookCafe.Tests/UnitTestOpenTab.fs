@@ -13,4 +13,12 @@ let ``Can Open a new Tab`` () =
     Given(State.ClosedTab None) // Current State
     |> When(Command.OpenTab tab) // Command
     |> ThenStateShouldBe(State.OpenedTab tab) // New State
-    |> WithEvents(Event.TabOpened tab) // Event Emitted
+    |> WithEvents([ Event.TabOpened tab ]) // Event Emitted
+
+[<Test>]
+let ``Cannot open an already Opened tab`` () =
+    let tab = { ID = Guid.NewGuid(); TableNumber = 1 }
+
+    Given(State.OpenedTab tab)
+    |> When(Command.OpenTab tab)
+    |> ShouldFailWith Error.TabAlreadyOpened

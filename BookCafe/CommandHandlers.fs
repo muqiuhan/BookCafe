@@ -1,5 +1,6 @@
 module BookCafe.CommandHandlers
 
+open Chessie.ErrorHandling
 
 let apply state event =
     match state, event with
@@ -8,10 +9,13 @@ let apply state event =
 
 let execute state command =
     match command with
-    | Command.OpenTab tab -> Event.TabOpened tab
+    | Command.OpenTab tab ->
+        match state with
+        | State.ClosedTab _ -> [ Event.TabOpened tab ] |> ok
+        | _ -> Error.TabAlreadyOpened |> fail
     | _ -> failwith "TODO"
 
 let evolve state command =
-    let event = execute state command
-    let newState = apply state event
-    (newState, event)
+    match execute state command with
+    | Ok (event, _) -> (List.fold apply state event, event) |> ok
+    | Bad err -> Bad err

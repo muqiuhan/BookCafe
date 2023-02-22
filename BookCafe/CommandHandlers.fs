@@ -8,11 +8,13 @@ let apply state event =
     | _ -> state
 
 let execute state command =
-    match command with
-    | Command.OpenTab tab ->
-        match state with
+    let handleOpenTab tab =
+        function
         | State.ClosedTab _ -> [ Event.TabOpened tab ] |> ok
-        | _ -> Error.TabAlreadyOpened |> fail
+        | _ -> Error.TabAlreadyOpened |> fail in
+
+    match command with
+    | Command.OpenTab tab -> handleOpenTab tab state
     | _ -> failwith "TODO"
 
 let evolve state command =

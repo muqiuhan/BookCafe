@@ -15,6 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Chessie" Version="0.6.0"/>
+        <PackageReference Include="FsUnit" Version="5.2.0"/>
         <PackageReference Include="Suave" Version="2.6.2"/>
     </ItemGroup>
 

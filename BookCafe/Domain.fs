@@ -23,4 +23,11 @@ type InProgressOrder =
     { PlacedOrder: Order
       ServedDrinks: Drink list
       ServedBooks: Book list
-      PreparedBooks: Book list }
+      PreparedDrinks: Drink list }
+
+let isServingBookCompletesOrder order book =
+    List.isEmpty order.Drinks && order.Books = [ book ]
+
+let orderAmount order =
+    (order.Drinks |> List.map (fun (Drink drink) -> drink.Price) |> List.sum)
+    + (order.Books |> List.map (fun (Book book) -> book.Price) |> List.sum)

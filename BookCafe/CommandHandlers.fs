@@ -1,9 +1,41 @@
 module BookCafe.CommandHandlers
 
 open Chessie.ErrorHandling
+open Domain
 
 module Handler =
-    let PlaceOrder (order: Domain.Order) =
+    let (|NonOrderedBook|_|) order book =
+        match List.contains book order.Books with
+        | false -> Some book
+        | true -> None
+
+    let (|ServeBookCompletesOrder|_|) order book =
+        match isServingBookCompletesOrder order book with
+        | true -> Some book
+        | false -> None
+
+    let ServeBook book tabID =
+        function
+        | State.PlacedOrder order ->
+            let event = Event.BookServed(book, tabID)
+
+            match book with
+            | NonOrderedBook order _ -> Error.CanNotServeNonOrderedBook book |> fail
+            | ServeBookCompletesOrder order _ ->
+                event
+                :: [ Event.OrderServed(
+                         order,
+                         { Tab = order.Tab
+                           Amount = orderAmount order }
+                     ) ]
+                |> ok
+            | _ -> [ event ] |> ok
+        | State.ServedOrder _ -> Error.OrderAlreadyServed |> fail
+        | State.OpenedTab _ -> Error.CanNotServeForNonPlacedOrder |> fail
+        | State.ClosedTab _ -> Error.CanNotServeWithClosedTab |> fail
+        | _ -> failwith "TODO"
+
+    let PlaceOrder order =
         function
         | State.OpenedTab _ ->
             if List.isEmpty order.Books && List.isEmpty order.Drinks then
@@ -24,6 +56,7 @@ let execute state command =
     match command with
     | Command.OpenTab tab -> Handler.OpenTab tab state
     | Command.PlaceOrder order -> Handler.PlaceOrder order state
+    | Command.ServeBook (book, tabID) -> Handler.ServeBook book tabID state
     | _ -> failwith "TODO"
 
 let evolve state command =

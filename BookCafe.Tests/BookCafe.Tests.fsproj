@@ -11,6 +11,8 @@
         <Compile Include="UnitTestBookCafeDSL.fs"/>
         <Compile Include="UnitTestOpenTab.fs"/>
         <Compile Include="UnitTestPlaceOrder.fs"/>
+        <Compile Include="UnitTestData.fs"/>
+        <Compile Include="UnitTestServerDrink.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

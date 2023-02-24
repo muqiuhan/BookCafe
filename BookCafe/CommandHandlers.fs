@@ -9,10 +9,26 @@ module Handler =
         | false -> Some book
         | true -> None
 
+    let (|NonOrderedDrink|_|) order drink =
+        match List.contains drink order.Drinks with
+        | false -> Some drink
+        | true -> None
+
     let (|ServeBookCompletesOrder|_|) order book =
         match isServingBookCompletesOrder order book with
         | true -> Some book
         | false -> None
+
+    let PrepareDrink drink tabID =
+        function
+        | State.PlacedOrder order ->
+            match drink with
+            | NonOrderedDrink order _ -> Error.CanNotPrepareNonOrderedDrink drink |> fail
+            | _ -> [ Event.DrinkPrepared(drink, tabID) ] |> ok
+        | State.ServedOrder _ -> Error.OrderAlreadyServed |> fail
+        | State.OpenedTab _ -> Error.CanNotPrepareForNonPlacedOrder |> fail
+        | State.ClosedTab _ -> Error.CanNotPrepareWithClosedTab |> fail
+        | _ -> failwith "TODO"
 
     let ServeBook book tabID =
         function
@@ -57,6 +73,7 @@ let execute state command =
     | Command.OpenTab tab -> Handler.OpenTab tab state
     | Command.PlaceOrder order -> Handler.PlaceOrder order state
     | Command.ServeBook (book, tabID) -> Handler.ServeBook book tabID state
+    | Command.PrepareDrink (drink, tabID) -> Handler.PrepareDrink drink tabID state
     | _ -> failwith "TODO"
 
 let evolve state command =

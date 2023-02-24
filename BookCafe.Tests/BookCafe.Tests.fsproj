@@ -12,7 +12,8 @@
         <Compile Include="UnitTestOpenTab.fs"/>
         <Compile Include="UnitTestPlaceOrder.fs"/>
         <Compile Include="UnitTestData.fs"/>
-        <Compile Include="UnitTestServerDrink.fs"/>
+        <Compile Include="UnitTestServerBook.fs"/>
+        <Compile Include="UnitTestPrepareBook.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

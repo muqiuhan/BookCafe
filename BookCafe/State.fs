@@ -20,5 +20,11 @@ let apply state event =
           ServedBooks = [ book ]
           PreparedDrinks = [] }
         |> OrderInProgress
+    | PlacedOrder order, Event.DrinkPrepared (drink, _) ->
+        { PlacedOrder = order
+          ServedDrinks = []
+          ServedBooks = []
+          PreparedDrinks = [ drink ] }
+        |> OrderInProgress
     | OrderInProgress _, Event.OrderServed (order, _) -> ServedOrder order
     | _ -> state

@@ -11,3 +11,6 @@ type t =
     | OrderAlreadyServed
     | CanNotServeForNonPlacedOrder
     | CanNotServeWithClosedTab
+    | CanNotPrepareNonOrderedDrink of Drink
+    | CanNotPrepareForNonPlacedOrder
+    | CanNotPrepareWithClosedTab

@@ -1,4 +1,4 @@
-module BookCafe.Tests.UnitTestServerDrink
+module BookCafe.Tests.UnitTestServerBook
 
 open BookCafe
 open BookCafe.Domain

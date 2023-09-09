@@ -22,3 +22,13 @@
  *)
 
 module BookCafe.State
+
+open Domain
+open System
+
+type State =
+    | ClosedTab of option<Guid>
+    | OpenedTab of Tab
+    | PlaceOrder of Order
+    | OrderInProgress of InProgressOrder
+    | ServedOrder of Order

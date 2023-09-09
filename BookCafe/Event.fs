@@ -22,3 +22,15 @@
  *)
 
 module BookCafe.Event
+
+open Domain
+open System
+
+type Event =
+    | TabOpened of Tab
+    | OrderPlaced of Order
+    | BookServed of Book * Guid
+    | DrinkPrepared of Drink * Guid
+    | DrinkServed of Drink * Guid
+    | OrderServed of Order * Payment
+    | TabClosed of Payment

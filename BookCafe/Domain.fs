@@ -22,3 +22,28 @@
  *)
 
 module BookCafe.Domain
+
+open System
+
+type Tab = { ID : Guid; TableNumber : int }
+
+type Item =
+    { MenuNumber : int
+      Price : decimal
+      Name : string }
+
+type Drink = Drink of Item
+type Book = Book of Item
+
+type Payment = { Tab : Tab; Amount : decimal }
+
+type Order =
+    { Drinks : list<Drink>
+      Books : list<Book>
+      Tab : Tab }
+
+type InProgressOrder =
+    { PlacedOrder : Order
+      ServedBooks : list<Book>
+      ServedDrinks : list<Drink>
+      PrepareDrinks : list<Drink> }

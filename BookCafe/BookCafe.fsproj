@@ -4,6 +4,10 @@
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Domain.fs" />
+    <Compile Include="Event.fs" />
+    <Compile Include="Command.fs" />
+    <Compile Include="State.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

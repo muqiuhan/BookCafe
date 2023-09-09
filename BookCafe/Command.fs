@@ -22,3 +22,14 @@
  *)
 
 module BookCafe.Command
+
+open Domain
+open System
+
+type Command =
+    | OpenTab of Tab
+    | PlaceOrder of Order
+    | ServeBook of Book * Guid
+    | PrepareDrink of Drink * Guid
+    | ServeDrink of Drink * Guid
+    | CloseTab of Payment

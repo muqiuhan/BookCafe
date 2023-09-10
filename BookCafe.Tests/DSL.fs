@@ -21,20 +21,23 @@
  * SOFTWARE.
  *)
 
-module BookCafe.State
+/// Some DSL to make it easier to write unit tests.
+module BookCafe.Tests.DSL
 
+open FsUnit
+open BookCafe.Tests.CommandHandlers
+open BookCafe.State
 open BookCafe.Event
-open BookCafe.Domain
-open System
+open BookCafe.Command
 
-type State =
-    | ClosedTab of option<Guid>
-    | OpenedTab of Tab
-    | PlaceOrder of Order
-    | OrderInProgress of InProgressOrder
-    | ServedOrder of Order
+let Given (state : State) = state
 
-let Apply (state : State) (event : Event) : State =
-    match (state, event) with
-    | ClosedTab _, TabOpened tab -> OpenedTab tab
-    | _ -> state
+let When (command : Command) (state : State) = (command, state)
+
+let ThenStateShouldBe (expected : State) (command : Command, state : State) =
+    let actual, events = Evolve state command in
+    actual |> should equal expected
+    events
+
+let WithEvents (expected : list<Event>) (actual : list<Event>) =
+    actual |> should equal expected

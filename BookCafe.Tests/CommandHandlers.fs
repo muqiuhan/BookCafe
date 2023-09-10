@@ -21,20 +21,22 @@
  * SOFTWARE.
  *)
 
-module BookCafe.State
+module BookCafe.Tests.CommandHandlers
 
+open BookCafe.State
+open BookCafe.Command
 open BookCafe.Event
 open BookCafe.Domain
+
 open System
 
-type State =
-    | ClosedTab of option<Guid>
-    | OpenedTab of Tab
-    | PlaceOrder of Order
-    | OrderInProgress of InProgressOrder
-    | ServedOrder of Order
+let Execute (state : State) (command : Command) : list<Event> =
+    match command with
+    | OpenTab tab -> [ TabOpened tab ]
+    | _ -> [ TabOpened { ID = Guid.NewGuid(); TableNumber = 1 } ]
 
-let Apply (state : State) (event : Event) : State =
-    match (state, event) with
-    | ClosedTab _, TabOpened tab -> OpenedTab tab
-    | _ -> state
+/// State transformation
+let Evolve (state : State) (command : Command) : State * list<Event> =
+    let events = Execute state command in
+    let newState = List.fold Apply state events in
+    (newState, events)

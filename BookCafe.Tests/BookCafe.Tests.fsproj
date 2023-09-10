@@ -1,10 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CommandHandlers.fs" />
+    <Compile Include="DSL.fs" />
+    <Compile Include="OpenTabTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

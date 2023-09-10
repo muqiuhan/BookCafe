@@ -21,29 +21,21 @@
  * SOFTWARE.
  *)
 
-module BookCafe.Domain
+module BookCafe.Tests.OpenTabTests
 
 open System
+open NUnit.Framework
+open BookCafe.Tests.DSL
+open BookCafe.Domain
+open BookCafe.Event
+open BookCafe.Command
+open BookCafe.State
 
-type Tab = { ID : Guid; TableNumber : int }
+[<Test>]
+let ``Can open a new tab`` () =
+    let tab = { ID = Guid.NewGuid(); TableNumber = 1 } in
 
-type Item =
-    { MenuNumber : int
-      Price : decimal
-      Name : string }
-
-type Drink = Drink of Item
-type Book = Book of Item
-
-type Payment = { Tab : Tab; Amount : decimal }
-
-type Order =
-    { Drinks : list<Drink>
-      Books : list<Book>
-      Tab : Tab }
-
-type InProgressOrder =
-    { PlacedOrder : Order
-      ServedBooks : list<Book>
-      ServedDrinks : list<Drink>
-      PrepareDrinks : list<Drink> }
+    Given(ClosedTab None)
+    |> When(OpenTab tab)
+    |> ThenStateShouldBe(OpenedTab tab)
+    |> WithEvents [ TabOpened tab ]

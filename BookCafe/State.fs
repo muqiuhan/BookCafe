@@ -30,11 +30,12 @@ open System
 type State =
     | ClosedTab of option<Guid>
     | OpenedTab of Tab
-    | PlaceOrder of Order
+    | PlaceedOrder of Order
     | OrderInProgress of InProgressOrder
     | ServedOrder of Order
 
 let Apply (state : State) (event : Event) : State =
     match (state, event) with
     | ClosedTab _, TabOpened tab -> OpenedTab tab
+    | OpenedTab _, OrderPlaced order -> PlaceedOrder order
     | _ -> state

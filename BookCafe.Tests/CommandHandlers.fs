@@ -38,10 +38,20 @@ module Handlers =
         | ClosedTab _ -> [ TabOpened tab ] |> ok
         | _ -> TabAlreadyOpened |> fail
 
+    let PlaceOrder (order : Order) (state : State) : Result<list<Event>, Error> =
+        match state with
+        | OpenedTab _ ->
+            if List.isEmpty order.Books && List.isEmpty order.Drinks then
+                CanNotPlaceEmptyOrder |> fail
+            else
+                [ OrderPlaced order ] |> ok
+        | ClosedTab _ -> CanNotOrderWithClosedTab |> fail
+        | _ -> OrderAlreadyPlaced |> fail
 
 let Execute (state : State) (command : Command) : Result<list<Event>, Error> =
     match command with
     | OpenTab tab -> Handlers.OpenTab tab state
+    | PlaceOrder order -> Handlers.PlaceOrder order state
     | _ -> failwith "TODO"
 
 /// State transformation

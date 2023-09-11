@@ -10,7 +10,8 @@
     <Compile Include="DSL.fs" />
     <Compile Include="OpenTabTests.fs" />
     <Compile Include="PlaceOrderTests.fs" />
-    <Compile Include="ServeDrinkTests.fs" />
+    <Compile Include="ServeBookTests.fs" />
+    <Compile Include="PrepareDrinkTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

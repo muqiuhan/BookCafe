@@ -69,8 +69,8 @@ module Handlers =
             let event = BookServed(book, tabID) in
 
             match book with
-            | NonOrderedBook order book -> CanNotServeNonOrderedBook book |> fail
-            | ServeBookCompletesOrder order _book ->
+            | NonOrderedBook order _ -> CanNotServeNonOrderedBook book |> fail
+            | ServeBookCompletesOrder order _ ->
                 (event
                  :: [ OrderServed(
                           order,
@@ -84,11 +84,35 @@ module Handlers =
         | ClosedTab _ -> CanNotServeWithClosedTab |> fail
         | _ -> failwith "TODO"
 
+    let PrepareDrink
+        (drink : Drink)
+        (tabID : Guid)
+        (state : State)
+        : Result<list<Event>, Error>
+        =
+        let (|NonOrderedDrink|_|) (order : Order) (drink : Drink) : option<Drink> =
+            match List.contains drink order.Drinks with
+            | false -> Some drink
+            | true -> None
+
+        let event = DrinkPrepared(drink, tabID)
+
+        match state with
+        | PlacedOrder order ->
+            match drink with
+            | NonOrderedDrink order _ -> CanNotPrepareNonOrderedDrink drink |> fail
+            | _ -> [ event ] |> ok
+        | ServedOrder _ -> OrderAlreadyServed |> fail
+        | OpenedTab _ -> CanNotPrepareForNonPlacedOrder |> fail
+        | ClosedTab _ -> CanNotPrepareWithClosedTab |> fail
+        | _ -> failwith $"TODO"
+
 let Execute (state : State) (command : Command) : Result<list<Event>, Error> =
     match command with
     | OpenTab tab -> Handlers.OpenTab tab state
     | PlaceOrder order -> Handlers.PlaceOrder order state
     | ServeBook(book, tabID) -> Handlers.ServeBook book tabID state
+    | PrepareDrink(drink, tabID) -> Handlers.PrepareDrink drink tabID state
     | _ -> failwith "TODO"
 
 /// State transformation

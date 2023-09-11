@@ -34,3 +34,6 @@ type Error =
     | OrderAlreadyServed
     | CanNotServeForNonPlacedOrder
     | CanNotServeWithClosedTab
+    | CanNotPrepareNonOrderedDrink of Drink
+    | CanNotPrepareForNonPlacedOrder
+    | CanNotPrepareWithClosedTab

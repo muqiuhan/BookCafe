@@ -55,7 +55,6 @@ let OrderAmount (order : Order) : decimal =
     let drinkAmount =
         order.Drinks |> List.map (fun (Drink drink) -> drink.Price) |> List.sum
 
-    let bookAmount =
-        order.Books |> List.map (fun (Book book) -> book.Price) |> List.sum
+    let bookAmount = order.Books |> List.map (fun (Book book) -> book.Price) |> List.sum
 
     bookAmount + drinkAmount

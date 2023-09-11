@@ -21,7 +21,7 @@
  * SOFTWARE.
  *)
 
-module BookCafe.Tests.ServeDrink
+module BookCafe.Tests.ServeBook
 
 open BookCafe.Domain
 open BookCafe.State

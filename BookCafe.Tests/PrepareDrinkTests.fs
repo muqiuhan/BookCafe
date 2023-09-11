@@ -21,34 +21,50 @@
  * SOFTWARE.
  *)
 
-module BookCafe.State
+module BookCafe.Tests.PrepareDrink
 
-open BookCafe.Event
+
 open BookCafe.Domain
-open System
+open BookCafe.State
+open BookCafe.Command
+open BookCafe.Event
+open BookCafe.Error
+open BookCafe.Tests.DSL
+open BookCafe.Tests.Data
 
-type State =
-    | ClosedTab of option<Guid>
-    | OpenedTab of Tab
-    | PlacedOrder of Order
-    | OrderInProgress of InProgressOrder
-    | ServedOrder of Order
+open NUnit.Framework
 
-let Apply (state : State) (event : Event) : State =
-    match (state, event) with
-    | ClosedTab _, TabOpened tab -> OpenedTab tab
-    | OpenedTab _, OrderPlaced order -> PlacedOrder order
-    | PlacedOrder order, BookServed(item, _tabID) ->
-        { PlacedOrder = order
-          ServedBooks = [ item ]
-          ServedDrinks = []
-          PrepareDrinks = [] }
-        |> OrderInProgress
-    | PlacedOrder order, DrinkPrepared(drink, _tabID) ->
+[<Test>]
+let ``Can prepare drink`` () =
+    let order = { order with Drinks = [ coke ] } in
+
+    let expected =
         { PlacedOrder = order
           ServedBooks = []
-          ServedDrinks = []
-          PrepareDrinks = [ drink ] }
-        |> OrderInProgress
-    | OrderInProgress _inProgressOrder, OrderServed(order, _payment) -> ServedOrder order
-    | _ -> state
+          PrepareDrinks = [ coke ]
+          ServedDrinks = [] }
+
+    Given(PlacedOrder order)
+    |> When(PrepareDrink(coke, order.Tab.ID))
+    |> ThenStateShouldBe(OrderInProgress expected)
+    |> WithEvents [ DrinkPrepared(coke, order.Tab.ID) ]
+
+[<Test>]
+let ``Can not prepare a non-ordered drink`` () =
+    let order = { order with Drinks = [ coke ] }
+
+    Given(PlacedOrder order)
+    |> When(PrepareDrink(lemonade, order.Tab.ID))
+    |> ShouldFailWith(CanNotPrepareNonOrderedDrink lemonade)
+
+[<Test>]
+let ``Can not prepare a drink for served order`` () =
+    Given(ServedOrder order)
+    |> When(PrepareDrink(coke, order.Tab.ID))
+    |> ShouldFailWith OrderAlreadyServed
+
+[<Test>]
+let ``Can not prepare with closed tab`` () =
+    Given(ClosedTab None)
+    |> When(PrepareDrink(coke, order.Tab.ID))
+    |> ShouldFailWith CanNotPrepareWithClosedTab

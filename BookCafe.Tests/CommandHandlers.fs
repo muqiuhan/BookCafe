@@ -48,10 +48,47 @@ module Handlers =
         | ClosedTab _ -> CanNotOrderWithClosedTab |> fail
         | _ -> OrderAlreadyPlaced |> fail
 
+    let ServeBook
+        (book : Book)
+        (tabID : Guid)
+        (state : State)
+        : Result<list<Event>, Error>
+        =
+        let (|NonOrderedBook|_|) (order : Order) (book : Book) : option<Book> =
+            match List.contains book order.Books with
+            | false -> Some book
+            | true -> None in
+
+        let (|ServeBookCompletesOrder|_|) (order : Order) (book : Book) : option<Book> =
+            match IsServingBookCompletesOrder order book with
+            | true -> Some book
+            | false -> None
+
+        match state with
+        | PlacedOrder order ->
+            let event = BookServed(book, tabID) in
+
+            match book with
+            | NonOrderedBook order book -> CanNotServeNonOrderedBook book |> fail
+            | ServeBookCompletesOrder order _book ->
+                (event
+                 :: [ OrderServed(
+                          order,
+                          { Tab = order.Tab
+                            Amount = OrderAmount order }
+                      ) ])
+                |> ok
+            | _ -> [ event ] |> ok
+        | ServedOrder _ -> OrderAlreadyServed |> fail
+        | OpenedTab _ -> CanNotServeForNonPlacedOrder |> fail
+        | ClosedTab _ -> CanNotServeWithClosedTab |> fail
+        | _ -> failwith "TODO"
+
 let Execute (state : State) (command : Command) : Result<list<Event>, Error> =
     match command with
     | OpenTab tab -> Handlers.OpenTab tab state
     | PlaceOrder order -> Handlers.PlaceOrder order state
+    | ServeBook(book, tabID) -> Handlers.ServeBook book tabID state
     | _ -> failwith "TODO"
 
 /// State transformation

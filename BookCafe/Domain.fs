@@ -47,3 +47,15 @@ type InProgressOrder =
       ServedBooks : list<Book>
       ServedDrinks : list<Drink>
       PrepareDrinks : list<Drink> }
+
+let IsServingBookCompletesOrder (order : Order) (book : Book) : bool =
+    List.isEmpty order.Drinks && order.Books = [ book ]
+
+let OrderAmount (order : Order) : decimal =
+    let drinkAmount =
+        order.Drinks |> List.map (fun (Drink drink) -> drink.Price) |> List.sum
+
+    let bookAmount =
+        order.Books |> List.map (fun (Book book) -> book.Price) |> List.sum
+
+    bookAmount + drinkAmount

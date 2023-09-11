@@ -21,16 +21,50 @@
  * SOFTWARE.
  *)
 
-module BookCafe.Error
+module BookCafe.Tests.Data
 
-open Domain
+open BookCafe.Domain
+open System
 
-type Error =
-    | TabAlreadyOpened
-    | CanNotPlaceEmptyOrder
-    | CanNotOrderWithClosedTab
-    | OrderAlreadyPlaced
-    | CanNotServeNonOrderedBook of Book
-    | OrderAlreadyServed
-    | CanNotServeForNonPlacedOrder
-    | CanNotServeWithClosedTab
+let tab = { ID = Guid.NewGuid(); TableNumber = 1 }
+
+let RealWorldOCaml =
+    Book
+        { MenuNumber = 1
+          Name = "Real World OCaml"
+          Price = 1.5m }
+
+let ModernCompilerDesign =
+    Book
+        { MenuNumber = 3
+          Name = "ModernCompilerDesign"
+          Price = 1.0m }
+
+let PLConcetps =
+    Book
+        { MenuNumber = 5
+          Name = "PL Concepts"
+          Price = 1.3m }
+
+let coke =
+    Drink
+        { MenuNumber = 1
+          Name = "Coke"
+          Price = 1.5m }
+
+let lemonade =
+    Drink
+        { MenuNumber = 3
+          Name = "Lemonade"
+          Price = 1.0m }
+
+let appleJuice =
+    Drink
+        { MenuNumber = 5
+          Name = "Apple Juice"
+          Price = 1.3m }
+
+let order = { Tab = tab; Books = []; Drinks = [] }
+
+let BookPrice (Book(book)) : decimal = book.Price
+let DrinkPrice (Drink(drink)) : decimal = drink.Price

@@ -30,12 +30,19 @@ open System
 type State =
     | ClosedTab of option<Guid>
     | OpenedTab of Tab
-    | PlaceedOrder of Order
+    | PlacedOrder of Order
     | OrderInProgress of InProgressOrder
     | ServedOrder of Order
 
 let Apply (state : State) (event : Event) : State =
     match (state, event) with
     | ClosedTab _, TabOpened tab -> OpenedTab tab
-    | OpenedTab _, OrderPlaced order -> PlaceedOrder order
+    | OpenedTab _, OrderPlaced order -> PlacedOrder order
+    | PlacedOrder order, BookServed(item, _tabID) ->
+        { PlacedOrder = order
+          ServedBooks = [ item ]
+          ServedDrinks = []
+          PrepareDrinks = [] }
+        |> OrderInProgress
+    | OrderInProgress _inProgressOrder, OrderServed(order, _payment) -> ServedOrder order
     | _ -> state

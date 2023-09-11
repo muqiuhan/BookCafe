@@ -50,7 +50,7 @@ let ``Can place only books order`` () =
 
     Given(OpenedTab tab)
     |> When(PlaceOrder order)
-    |> ThenStateShouldBe(PlaceedOrder order)
+    |> ThenStateShouldBe(PlacedOrder order)
     |> WithEvents [ OrderPlaced order ]
 
 [<Test>]
@@ -75,6 +75,6 @@ let ``Can not place order multiple times`` () =
         { order with
             Books = [ RealWorldOCaml ] }
 
-    Given(PlaceedOrder order)
+    Given(PlacedOrder order)
     |> When(PlaceOrder order)
     |> ShouldFailWith OrderAlreadyPlaced

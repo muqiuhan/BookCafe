@@ -5,10 +5,12 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data.fs" />
     <Compile Include="CommandHandlers.fs" />
     <Compile Include="DSL.fs" />
     <Compile Include="OpenTabTests.fs" />
     <Compile Include="PlaceOrderTests.fs" />
+    <Compile Include="ServeDrinkTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

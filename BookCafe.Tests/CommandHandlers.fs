@@ -27,16 +27,25 @@ open BookCafe.State
 open BookCafe.Command
 open BookCafe.Event
 open BookCafe.Domain
+open BookCafe.Error
 
 open System
+open Chessie.ErrorHandling
 
-let Execute (state : State) (command : Command) : list<Event> =
+module Handlers =
+    let OpenTab (tab : Tab) (state : State) : Result<list<Event>, Error> =
+        match state with
+        | ClosedTab _ -> [ TabOpened tab ] |> ok
+        | _ -> TabAlreadyOpened |> fail
+
+
+let Execute (state : State) (command : Command) : Result<list<Event>, Error> =
     match command with
-    | OpenTab tab -> [ TabOpened tab ]
-    | _ -> [ TabOpened { ID = Guid.NewGuid(); TableNumber = 1 } ]
+    | OpenTab tab -> Handlers.OpenTab tab state
+    | _ -> failwith "TODO"
 
 /// State transformation
-let Evolve (state : State) (command : Command) : State * list<Event> =
-    let events = Execute state command in
-    let newState = List.fold Apply state events in
-    (newState, events)
+let Evolve (state : State) (command : Command) : Result<State * list<Event>, Error> =
+    match (Execute state command) with
+    | Ok(events, _msg) -> (List.fold Apply state events, events) |> ok
+    | Bad err -> Bad err

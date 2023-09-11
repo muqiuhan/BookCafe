@@ -21,28 +21,6 @@
  * SOFTWARE.
  *)
 
-module BookCafe.Tests.OpenTabTests
+module BookCafe.Error
 
-open System
-open NUnit.Framework
-open BookCafe.Tests.DSL
-open BookCafe.Domain
-open BookCafe.Event
-open BookCafe.Command
-open BookCafe.State
-open BookCafe.Error
-
-[<Test>]
-let ``Can open a new tab`` () =
-    let tab = { ID = Guid.NewGuid(); TableNumber = 1 } in
-
-    Given(ClosedTab None)
-    |> When(OpenTab tab)
-    |> ThenStateShouldBe(OpenedTab tab)
-    |> WithEvents [ TabOpened tab ]
-
-[<Test>]
-let ``Cannot open an already opened tab`` () =
-    let tab = { ID = Guid.NewGuid(); TableNumber = 1 } in
-
-    Given(OpenedTab tab) |> When(OpenTab tab) |> ShouldFailWith TabAlreadyOpened
+type Error = | TabAlreadyOpened

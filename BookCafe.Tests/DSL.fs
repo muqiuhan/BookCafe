@@ -29,15 +29,34 @@ open BookCafe.Tests.CommandHandlers
 open BookCafe.State
 open BookCafe.Event
 open BookCafe.Command
+open BookCafe.Error
 
-let Given (state : State) = state
+open Chessie.ErrorHandling
+open NUnit.Framework
 
-let When (command : Command) (state : State) = (command, state)
+let Given (state : State) : State = state
 
-let ThenStateShouldBe (expected : State) (command : Command, state : State) =
-    let actual, events = Evolve state command in
-    actual |> should equal expected
-    events
+let When (command : Command) (state : State) : Command * State = (command, state)
 
-let WithEvents (expected : list<Event>) (actual : list<Event>) =
-    actual |> should equal expected
+let ThenStateShouldBe
+    (expected : State)
+    (command : Command, state : State)
+    : option<list<Event>>
+    =
+    match Evolve state command with
+    | Ok((actual, events), _msg) ->
+        actual |> should equal expected
+        Some events
+    | Bad err ->
+        Assert.Fail $"Expected: {expected}, But actual: {err.Head}"
+        None
+
+let WithEvents (expected : list<Event>) (actual : option<list<Event>>) =
+    match actual with
+    | Some actual -> actual |> should equal expected
+    | None -> None |> should equal expected
+
+let ShouldFailWith (expected : Error) (command : Command, state : State) : unit =
+    match Evolve state command with
+    | Bad err -> err.Head |> should equal expected
+    | Ok(r, _msg) -> Assert.Fail $"Expected: {expected}, But actual: {r}"

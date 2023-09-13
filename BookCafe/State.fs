@@ -51,4 +51,8 @@ let Apply (state : State) (event : Event) : State =
           PrepareDrinks = [ drink ] }
         |> OrderInProgress
     | OrderInProgress _inProgressOrder, OrderServed(order, _payment) -> ServedOrder order
+    | OrderInProgress inProgressOrder, BookServed(book, _id) ->
+        { inProgressOrder with
+            ServedBooks = book :: inProgressOrder.ServedBooks }
+        |> OrderInProgress
     | _ -> state

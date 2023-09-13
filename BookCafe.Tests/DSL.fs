@@ -25,7 +25,7 @@
 module BookCafe.Tests.DSL
 
 open FsUnit
-open BookCafe.Tests.CommandHandlers
+open BookCafe.CommandHandlers
 open BookCafe.State
 open BookCafe.Event
 open BookCafe.Command

@@ -23,7 +23,6 @@
 
 module BookCafe.Tests.PrepareDrink
 
-
 open BookCafe.Domain
 open BookCafe.State
 open BookCafe.Command

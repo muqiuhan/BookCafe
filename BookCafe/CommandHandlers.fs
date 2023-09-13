@@ -21,11 +21,11 @@
  * SOFTWARE.
  *)
 
-module BookCafe.Tests.CommandHandlers
+module BookCafe.CommandHandlers
 
+open BookCafe.Event
 open BookCafe.State
 open BookCafe.Command
-open BookCafe.Event
 open BookCafe.Domain
 open BookCafe.Error
 
@@ -82,7 +82,9 @@ module Handlers =
         | ServedOrder _ -> OrderAlreadyServed |> fail
         | OpenedTab _ -> CanNotServeForNonPlacedOrder |> fail
         | ClosedTab _ -> CanNotServeWithClosedTab |> fail
-        | _ -> failwith "TODO"
+        | OrderInProgress inProgressOrder ->
+            [ BookServed(book, inProgressOrder.PlacedOrder.Tab.ID) ] |> ok
+
 
     let PrepareDrink
         (drink : Drink)

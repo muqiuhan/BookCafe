@@ -7,7 +7,7 @@
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/BuildTool/RecentDotNetCliExePaths/=_002Fhome_002Fmuqiu_002Dhan_002FApplication_002Fdotnet_002Fdotnet/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3a6dcdd5_002Da107_002D458f_002Db490_002D6965a1b97750/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="UnitTestPrepareBook" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::87943F05-8396-4C34-8ADD-BE1182817260::net7.0::BookCafe.Tests.UnitTestPrepareBook&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::87943F05-8396-4C34-8ADD-BE1182817260::net8.0::BookCafe.Tests.ServeDrink.Remain in order in progress while serving book&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

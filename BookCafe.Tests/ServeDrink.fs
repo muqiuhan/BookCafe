@@ -53,3 +53,35 @@ let ``Remain in order in progress while serving book`` () =
     |> When(ServeBook(ModernCompilerDesign, order.Tab.ID))
     |> ThenStateShouldBe(OrderInProgress expected)
     |> WithEvents [ BookServed(ModernCompilerDesign, order.Tab.ID) ]
+
+[<Test>]
+let ``Can not serve non ordered books during order in progress `` () =
+    let order =
+        { order with
+            Books = [ RealWorldOCaml; ModernCompilerDesign ] }
+
+    let orderInProgress =
+        { PlacedOrder = order
+          ServedBooks = [ RealWorldOCaml ]
+          PrepareDrinks = []
+          ServedDrinks = [] }
+
+    Given(OrderInProgress orderInProgress)
+    |> When(ServeBook(PLConcetps, order.Tab.ID))
+    |> ShouldFailWith(CanNotServeNonOrderedBook PLConcetps)
+
+[<Test>]
+let ``Can not serve an already served books`` () =
+    let order =
+        { order with
+            Books = [ RealWorldOCaml; ModernCompilerDesign ] }
+
+    let orderInProgress =
+        { PlacedOrder = order
+          ServedBooks = [ RealWorldOCaml ]
+          PrepareDrinks = []
+          ServedDrinks = [] }
+
+    Given(OrderInProgress orderInProgress)
+    |> When(ServeBook(RealWorldOCaml, order.Tab.ID))
+    |> ShouldFailWith(CanNotServeAlreadyServedBook RealWorldOCaml)

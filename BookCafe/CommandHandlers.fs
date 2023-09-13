@@ -64,6 +64,15 @@ module Handlers =
             | true -> Some book
             | false -> None
 
+        let (|AlreadyServedBook|_|)
+            (inProgressOrder : InProgressOrder)
+            (book : Book)
+            : option<Book>
+            =
+            match List.contains book inProgressOrder.ServedBooks with
+            | true -> Some book
+            | false -> None
+
         match state with
         | PlacedOrder order ->
             let event = BookServed(book, tabID) in
@@ -83,7 +92,14 @@ module Handlers =
         | OpenedTab _ -> CanNotServeForNonPlacedOrder |> fail
         | ClosedTab _ -> CanNotServeWithClosedTab |> fail
         | OrderInProgress inProgressOrder ->
-            [ BookServed(book, inProgressOrder.PlacedOrder.Tab.ID) ] |> ok
+            let order = inProgressOrder.PlacedOrder
+            let event = BookServed(book, inProgressOrder.PlacedOrder.Tab.ID)
+
+            match book with
+            | NonOrderedBook order _ -> CanNotServeNonOrderedBook book |> fail
+            | AlreadyServedBook inProgressOrder _ ->
+                CanNotServeAlreadyServedBook book |> fail
+            | _ -> [ event ] |> ok
 
 
     let PrepareDrink

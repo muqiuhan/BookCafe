@@ -37,3 +37,4 @@ type Error =
     | CanNotPrepareNonOrderedDrink of Drink
     | CanNotPrepareForNonPlacedOrder
     | CanNotPrepareWithClosedTab
+    | CanNotServeAlreadyServedBook of Book
